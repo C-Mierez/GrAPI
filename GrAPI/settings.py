@@ -20,7 +20,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY','$*c9ru=ld5%hj))k=1p#^2i9ud_95x+u3h0#n%
 SIGNING_KEY = os.environ.get('SIGNING_KEY','$*c9ru=ld5%hj))k=1p#^2i9ud_95x+u3h0#n%nmedjvc)@7qj')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG',True) == 'True'
 
 ALLOWED_HOSTS = []
 
