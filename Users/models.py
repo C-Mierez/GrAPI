@@ -1,6 +1,8 @@
 from django.db import models, transaction
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin, BaseUserManager, Group)
 from django.utils import timezone
+from GrAPI.models import SoftDeletionUserModel, SoftDeletionUserManager
+import uuid
 
 class Role(models.Model):
     # Constantes
@@ -19,7 +21,7 @@ class Role(models.Model):
       return self.get_id_display()
     
 
-class UserManager(BaseUserManager):
+class UserManager(SoftDeletionUserManager):
     
     def create_user(self, username, role, password=None, **kwargs):
         if not username:
@@ -47,16 +49,22 @@ class UserManager(BaseUserManager):
         
         return user
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(SoftDeletionUserModel, PermissionsMixin):
     """ Modelo para representar al usuario """
     id          = models.AutoField(primary_key=True)
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username    = models.CharField(max_length=127, unique=True)
     is_active   = models.BooleanField(default=True)
     is_staff    = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     role        = models.ForeignKey(Role, on_delete=models.PROTECT, default=2)
     
+    #? "SoftDeletionUserModel" define un manager como 'objects'. 
+    #? UserManager extiende de SoftDeletionUserManager
     objects = UserManager()
+    
+    #? Además, se define 'all_objects' para ver todos los usuarios
+    
     
     # Se define el atributo a ser considerado como Unique por el backend
     # de Django

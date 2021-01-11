@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     
     # External
     'rest_framework',
+    'django_extensions',
     
     # Own
     'Users.apps.UsersConfig'

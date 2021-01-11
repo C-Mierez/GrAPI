@@ -7,12 +7,22 @@ from django.http import  JsonResponse
 from rest_framework import status
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
     permission_classes = [IsAdminUser]
+    
+    def retrieve(self, request, pk=None):
+        print('ESTOY EN EL RETRIEVE JAJAJFJDS,JKFHJSKFHJSDJF')
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+        
 
 @api_view(http_method_names=['GET', 'POST'])
 @permission_classes([AllowAny])

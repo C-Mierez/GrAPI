@@ -16,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username','role',)
+        fields = ('username','role','is_active',)
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -61,10 +61,11 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('username', 'is_staff','role',)
+    list_display = ('username', 'is_active','is_staff','role',)
     list_filter = ('is_staff',)
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
+        ('State', {'fields': ('is_active', 'deleted_at',)}),
         ('Personal info', {'fields': ('role',)}),
         ('Permissions', {'fields': ('is_staff',)}),
     )
@@ -79,13 +80,28 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('username','role',)
     ordering = ('username',)
     filter_horizontal = ()
+    
+    readonly_fields = ('is_active','deleted_at',)
 
+
+class SoftDeletionUserAdmin(UserAdmin):
+    def get_queryset(self, request):
+        # Esto permite que el admin pueda ver a todos los usuarios, 'validos" o no
+        #! Esto solo funciona si el Model es un SoftDeleteModel
+        qs = self.model.all_objects
+        # The below is copied from the base implementation in BaseModelAdmin to prevent other changes in behavior
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
+    
+    #? Descomentar para permitir que el admin elimine verdaderamente a los usuarios
+    # def delete_model(self, request, obj):
+    #     obj.hard_delete()
 
 # Now register the new UserAdmin...
-admin.site.register(User, UserAdmin)
+admin.site.register(User, SoftDeletionUserAdmin)
+# admin.site.register(User, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
-
-# TODO: Crear un CustomUserAdmin ya que email no está en User 
-#admin.site.register(User, UserAdmin)
