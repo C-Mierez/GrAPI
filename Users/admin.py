@@ -88,7 +88,7 @@ class SoftDeletionUserAdmin(UserAdmin):
     def get_queryset(self, request):
         # Esto permite que el admin pueda ver a todos los usuarios, 'validos" o no
         #! Esto solo funciona si el Model es un SoftDeleteModel
-        qs = self.model.all_objects
+        qs = self.model.objects
         # The below is copied from the base implementation in BaseModelAdmin to prevent other changes in behavior
         ordering = self.get_ordering(request)
         if ordering:
