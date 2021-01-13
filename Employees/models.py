@@ -27,10 +27,13 @@ class EmployeeManager(models.Manager):
             raise ValueError('Usuario debe tener el parametro  employee_id')
         if not created_by:
             raise ValueError('Usuario debe tener el parametro  created_by')
+        try:
+            role = Role.objects.get(pk=Role.GUARD)
+        except Role.DoesNotExist:
+            raise ValueError('Rol default del usuario no existe.')
         
         newUsername = generate_username(last_name=surname, employee_id=employee_id)
         newPassword = '12345'
-        role = Role.objects.get(pk=Role.GUARD)
         try:
             with transaction.atomic():
                 user = User.objects.create(username=newUsername, role=role, created_by=created_by, password=newPassword)
