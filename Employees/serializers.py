@@ -35,10 +35,18 @@ class UnexpectedParametersErrorMixin:
 class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSerializer):   
     
     user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
+    role = serializers.SerializerMethodField()
+    
+    def get_role(self, obj):
+        try:
+            role = obj.user.role.id
+            return role
+        except:
+            return None
     
     class Meta:
         model = Employee
-        fields = ['url', 'name', 'surname', 'employee_id', 'user', ]
+        fields = ['url', 'name', 'surname', 'employee_id', 'user', 'role']
         extra_kwargs = {
             'url': {
                 'view_name': "employee-detail"
