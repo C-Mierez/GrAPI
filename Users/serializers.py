@@ -57,7 +57,7 @@ class UserSerializer(ReadOnlyErrorMixin, UnexpectedParametersErrorMixin, seriali
                 'read_only': True
             },
             'is_active': {
-                'read_only': False,
+                'read_only': True,
             },
         }
     

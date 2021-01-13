@@ -30,7 +30,7 @@ class EmployeeList(APIView):
     
     def post(self, request, format=None):
         """
-        Creacion de un usuario
+        Creacion de un empleado junto con su usuario
         """
         serializer = self.serializer_class(data=request.data, many=False, context={'request': request})
         if serializer.is_valid():            
