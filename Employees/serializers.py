@@ -32,7 +32,7 @@ class UnexpectedParametersErrorMixin:
         return super().run_validation(data)
     
 
-class EmployeeSerializer(ReadOnlyErrorMixin, UnexpectedParametersErrorMixin, serializers.HyperlinkedModelSerializer):   
+class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSerializer):   
     
     user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
     
