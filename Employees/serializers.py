@@ -36,6 +36,7 @@ class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSeriali
     
     user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
     role = serializers.SerializerMethodField()
+    id = serializers.ReadOnlyField()
     
     def get_role(self, obj):
         try:
@@ -46,7 +47,7 @@ class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSeriali
     
     class Meta:
         model = Employee
-        fields = ['url', 'name', 'surname', 'employee_id', 'user', 'role', 'id']
+        fields = ['url', 'name', 'surname', 'employee_id', 'user', 'role']
         extra_kwargs = {
             'url': {
                 'view_name': "employee-detail"
@@ -63,9 +64,6 @@ class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSeriali
             'user': {
                 'read_only': True
             },
-            'id': {
-                'read_only': True
-            }
         }
     
     def create(self, validated_data):
