@@ -58,6 +58,7 @@ class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSeriali
         }
     
     def create(self, validated_data):
+        print(validated_data)
         return super(EmployeeSerializer, self).create(validated_data)
         
     def update(self, instance, validated_data):
