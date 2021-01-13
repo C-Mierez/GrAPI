@@ -16,23 +16,30 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from Users.views import UserViewSet, test_view
+# from Users.views import UserViewSet, test_view, ListUsers
+from Users.views import test_view, UserList, UserDetail
+from Employees.views import EmployeeList, EmployeeDetail
 from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView, TokenVerifyView)
 from Tokens.views import MyTokenObtainPairView
 
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+# router.register(r'users', UserViewSet)
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),    
     #? Users
-    path('api/', include(router.urls)),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    # path('api/', include(router.urls)), 
+    
+    path('api/users/', UserList.as_view(), name='user-list'),
+    path('api/users/<int:pk>/', UserDetail.as_view(), name='user-detail' ),
+    path('api/employees/', EmployeeList.as_view(), name='employee-list'),
+    path('api/employees/<int:pk>/', EmployeeDetail.as_view(), name='employee-detail' ),
     
     # TODO: Eliminar fuera de Debug
     path('api-auth/', include('rest_framework.urls')),
