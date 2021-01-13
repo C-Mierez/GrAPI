@@ -38,8 +38,7 @@ class UserSerializer(ReadOnlyErrorMixin, UnexpectedParametersErrorMixin, seriali
     #     required=True,
     # )    
     role = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), required=True)
-    # created_by = serializers.SlugRelatedField(read_only=True, slug_field='username',)
-    created_by = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
+    created_by = serializers.SlugRelatedField(read_only=True, slug_field='username')
 
     
     class Meta:
