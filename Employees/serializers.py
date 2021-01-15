@@ -1,41 +1,14 @@
 from rest_framework import serializers
 from .models import EmployeeManager, Employee
 
-from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
-from rest_framework.settings import api_settings
-
-class ReadOnlyErrorMixin:
-    def run_validation(self, data=empty):
-        for fieldname, field in self.fields.items():
-            if field.read_only and fieldname in data.keys():
-                raise ValidationError(
-                    code='write_on_read_only_field',
-                    detail={
-                        fieldname: (
-                            f"You're trying to write to the field "
-                            "'{fieldname}' which is a read-only field."
-                        )
-                    }
-                )
-        return super().run_validation(data)
-    
-class UnexpectedParametersErrorMixin:
-    def run_validation(self, data=empty):
-        if data is not empty:
-            unknown = set(data) - set(self.fields)
-            if unknown:
-                errors = ["Unknown field: {}".format(f) for f in unknown]
-                raise ValidationError({
-                    api_settings.NON_FIELD_ERRORS_KEY: errors,
-                })
-        return super().run_validation(data)
-    
+from GrAPI.mixins import ReadOnlyErrorMixin, UnexpectedParametersErrorMixin
 
 class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSerializer):   
     
     user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
-    role = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField(read_only=True)
+    is_active = serializers.SerializerMethodField(read_only=True)
     
     def get_role(self, obj):
         try:
@@ -43,10 +16,17 @@ class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSeriali
             return role
         except:
             return None
+        
+    def get_is_active(self, obj):
+        try:
+            is_active = obj.user.is_active
+            return is_active
+        except:
+            return None
     
     class Meta:
         model = Employee
-        fields = ['url', 'name', 'surname', 'employee_id', 'user', 'role', 'id']
+        fields = ['url', 'name', 'surname', 'employee_id', 'user', 'role', 'is_active', 'id']
         extra_kwargs = {
             'url': {
                 'view_name': "employee-detail"
