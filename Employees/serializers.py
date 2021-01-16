@@ -4,7 +4,7 @@ from .models import EmployeeManager, Employee
 from rest_framework.exceptions import ValidationError
 from GrAPI.mixins import ReadOnlyErrorMixin, UnexpectedParametersErrorMixin
 
-class EmployeeSerializer(ReadOnlyErrorMixin, serializers.HyperlinkedModelSerializer):   
+class EmployeeSerializer(ReadOnlyErrorMixin, UnexpectedParametersErrorMixin, serializers.HyperlinkedModelSerializer):   
     
     user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
     role = serializers.SerializerMethodField(read_only=True)

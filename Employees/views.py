@@ -53,27 +53,29 @@ class EmployeeDetail(APIView):
         serializer = self.serializer_class(employees, many=False, context={'request': request})
         return Response(serializer.data)
     
-    # def patch(self, request, pk, format=None):
-    #     employess = get_object_or_404(User, pk=pk)
-    #     serializer = self.serializer_class(user, data=request.data, many=False, partial=True, context={'request': request}) # set partial=True to update a data partially
-    #     if serializer.is_valid():
-    #         serializer.save(updated_by=request.user)
-    #         if getattr(user, '_prefetched_objects_cache', None):
-    #             # If 'prefetch_related' has been applied to a queryset, we need to
-    #             # forcibly invalidate the prefetch cache on the instance.
-    #             user._prefetched_objects_cache = {}
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def patch(self, request, pk, format=None):
+        employee = get_object_or_404(Employee, pk=pk)
+        serializer = self.serializer_class(employee, data=request.data, many=False, partial=True, context={'request': request}) # set partial=True to update a data partially
+        if serializer.is_valid():
+            with transaction.atomic():
+                serializer.save(updated_by=request.user)
+                if getattr(employee, '_prefetched_objects_cache', None):
+                    # If 'prefetch_related' has been applied to a queryset, we need to
+                    # forcibly invalidate the prefetch cache on the instance.
+                    user._prefetched_objects_cache = {}
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Hacer un PUT seria en realidad lo que hace el Patch pero cambiando partial=True
     
     
-    # def delete(self, request, pk, format=None):
-    #     user = get_object_or_404(User, pk=pk)
-    #     with transaction.atomic():
-    #         user.delete(user=request.user)
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
-    #     return Response(status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk, format=None):
+        employee = get_object_or_404(Employee.actives, pk=pk)
+        with transaction.atomic():
+            user = employee.user
+            user.delete(user=request.user)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 

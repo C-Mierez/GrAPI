@@ -117,8 +117,8 @@ class SoftDeletionUserManager(BaseUserManager):
 class SoftDeletionUserModel(AbstractBaseUser):
     """ Similar a "SoftDeletionModel" pero hereda de Abstract User """
     
-    deleted_at = models.DateTimeField(blank=True, null=True)
-    deleted_by = models.OneToOneField(AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT)
+    deleted_at = models.DateTimeField(blank=True, null=True,)
+    deleted_by = models.ForeignKey(AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT,)
 
     # Se proporciona un manager adicional que considera aquellos que fueron 'eliminados' también
     objects = SoftDeletionUserManager()
