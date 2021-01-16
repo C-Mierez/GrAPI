@@ -70,9 +70,11 @@ class EmployeeDetail(APIView):
     
     
     def delete(self, request, pk, format=None):
-        employee = get_object_or_404(Employee.actives, pk=pk)
+        employee = get_object_or_404(Employee, pk=pk)
         with transaction.atomic():
             user = employee.user
+            if not user.is_active:
+                raise Http404("User is already inactive.")
             user.delete(user=request.user)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
